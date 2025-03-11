@@ -16,9 +16,9 @@ router.get("/", async function (req, res) {
 });
 
 // Add a trip to the user's cart
-router.post("/:userId/cart", async (req, res) => {
+router.post("/:sessionId/cart", async (req, res) => {
   const { tripId } = req.body;
-  const user = await User.findById(req.params.userId);
+  const user = await User.findOne({ sessionId: req.params.sessionId });
   const trip = await Trip.findById(tripId);
 
   if (!user || !trip) {
@@ -35,8 +35,8 @@ router.post("/:userId/cart", async (req, res) => {
 });
 
 // Checkout: Move trips from cart to bookedTrips
-router.post("/:userId/checkout", async (req, res) => {
-  const user = await User.findById(req.params.userId);
+router.post("/:sessionId/checkout", async (req, res) => {
+  const user = await User.findOne({ sessionId: req.params.sessionId });
   if (!user) {
     return res.status(404).json({ message: "User not found" });
   }
