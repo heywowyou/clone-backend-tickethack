@@ -101,6 +101,10 @@ router.post("/login", async (req, res) => {
       return res.status(401).send("Utilisateur non trouvé");
     }
 
+    if (user.password !== password) {
+      return res.status(401).send("Mot de passe incorrect");
+    }
+
     // Enregistrer l'ID de session dans la base de données
     user.sessionId = req.sessionID; // `req.sessionID` contient l'ID de la session
 
