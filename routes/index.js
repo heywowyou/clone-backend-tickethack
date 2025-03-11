@@ -3,6 +3,7 @@ var router = express.Router();
 const mongoose = require("mongoose");
 const moment = require("moment");
 const Trip = require("../models/trips");
+const User = require("../models/users");
 
 /* GET All trips */
 router.get("/trips", async function (req, res) {
