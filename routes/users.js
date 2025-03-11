@@ -2,6 +2,7 @@ var express = require("express");
 var router = express.Router();
 const User = require("../models/users");
 const Trip = require("../models/trips");
+const session = require("express-session");
 
 // Get all users
 router.get("/", async function (req, res) {
@@ -50,6 +51,60 @@ router.post("/:userId/checkout", async (req, res) => {
     .json({ message: "Checkout successful", bookedTrips: user.bookedTrips });
 });
 
+router.post("/CreateAccount", async (req, res) => {
+  const { username, password } = req.body;
+
+  if (!username || !password) {
+    res.status(400).json({ message: "Please provide username and password" });
+    return;
+  }
+
+  const user = await User.findOne({ username });
+
+  if (user) {
+    res.status(400).json({ message: "Username already exists" });
+    return;
+  }
+
+  const newUser = new User({ username, password });
+
+  try {
+    await newUser.save();
+
+    req.session.user = {
+      _id: newUser._id,
+      username: newUser.username,
+    };
+
+    res.status(200).json({ message: "Account created successfully" });
+  } catch {}
+});
+
+router.post("/login", async (req, res) => {
+  const { username, password } = req.body;
+
+  try {
+    // Vérifier les informations d'identification de l'utilisateur
+    const user = await User.findOne({ username: username, password: password });
+
+    if (!user) {
+      return res.status(401).send("Utilisateur non trouvé");
+    }
+
+    // Enregistrer l'ID de session dans la base de données
+    user.sessionId = req.sessionID; // `req.sessionID` contient l'ID de la session
+
+    // Sauvegarder l'utilisateur avec l'ID de session
+    await user.save();
+
+    // Créer une session pour l'utilisateur
+    req.session.user = user; // Enregistrer l'utilisateur dans la session
+
+    res.send("Connexion réussie");
+  } catch (err) {
+    res.status(500).send("Erreur serveur");
+  }
+});
 /* Generate fake user
 router.post("/create", async (req, res) => {
   const username = "Alice";
