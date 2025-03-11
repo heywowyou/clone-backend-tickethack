@@ -14,6 +14,24 @@ router.get("/", async function (req, res) {
   res.status(200).json({ users });
 });
 
+// Add a trip to the user's cart
+router.post("/:userId/cart", async (req, res) => {
+  const { tripId } = req.body;
+  const user = await User.findById(req.params.userId);
+  const trip = await Trip.findById(tripId);
+
+  if (!user || !trip) {
+    return res.status(404).json({ message: "User or trip not found" });
+  }
+
+  // Add trip to cart if it's not already there
+  if (!user.cart.includes(tripId)) {
+    user.cart.push(tripId);
+    await user.save();
+  }
+
+  res.status(200).json({ message: "Trip added to cart", cart: user.cart });
+});
 
 /* Generate fake user
 router.post("/create", async (req, res) => {
