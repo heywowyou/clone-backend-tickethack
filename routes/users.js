@@ -4,6 +4,16 @@ const User = require("../models/users");
 const Trip = require("../models/trips");
 const session = require("express-session");
 
+// Find session id
+router.get("/session", async (req, res) => {
+  const user = await User.findOne({ sessionId: { $ne: null } });
+  if (user && user.sessionId) {
+    res.json({ sessionId: user.sessionId });
+  } else {
+    res.status(404).json({ message: "No active session found" });
+  }
+});
+
 // Get all users
 router.get("/", async function (req, res) {
   const users = await User.find();
