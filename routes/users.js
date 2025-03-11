@@ -33,6 +33,23 @@ router.post("/:userId/cart", async (req, res) => {
   res.status(200).json({ message: "Trip added to cart", cart: user.cart });
 });
 
+// Checkout: Move trips from cart to bookedTrips
+router.post("/:userId/checkout", async (req, res) => {
+  const user = await User.findById(req.params.userId);
+  if (!user) {
+    return res.status(404).json({ message: "User not found" });
+  }
+
+  // Move trips from cart to bookedTrips
+  user.bookedTrips.push(...user.cart);
+  user.cart = [];
+  await user.save();
+
+  res
+    .status(200)
+    .json({ message: "Checkout successful", bookedTrips: user.bookedTrips });
+});
+
 /* Generate fake user
 router.post("/create", async (req, res) => {
   const username = "Alice";
