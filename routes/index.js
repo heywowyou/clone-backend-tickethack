@@ -18,14 +18,24 @@ router.get("/trips", async function (req, res) {
 
 // Get trips by names
 router.get("/trips/:departure/:arrival/:date", async function (req, res) {
-  const { departure, arrival, date } = req.params;
+  let { departure, arrival, date } = req.params;
+
+  departure = departure.trim();
+  arrival = arrival.trim();
+  date = date.trim();
 
   const formattedDate = moment(date, "YYYY-MM-DD").startOf("day");
   const endOfDay = moment(formattedDate).endOf("day");
 
+  const departureRegex = new RegExp(
+    `^${departure.replace(/\s+/g, "\\s*")}$`,
+    "i"
+  );
+  const arrivalRegex = new RegExp(`^${arrival.replace(/\s+/g, "\\s*")}$`, "i");
+
   const trips = await Trip.find({
-    departure: { $regex: new RegExp(`^${departure}$`, "i") },
-    arrival: { $regex: new RegExp(`^${arrival}$`, "i") },
+    departure: { $regex: departureRegex },
+    arrival: { $regex: arrivalRegex },
     date: { $gte: formattedDate.toDate(), $lte: endOfDay.toDate() },
   });
 
