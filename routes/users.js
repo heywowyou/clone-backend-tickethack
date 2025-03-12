@@ -104,14 +104,7 @@ router.delete("/:sessionId/cart/:tripId", async (req, res) => {
     return res.status(404).json({ message: "User not found" });
   }
 
-  // Check if the trip is in the cart
-  const tripIndex = user.cart.indexOf(tripId);
-  if (tripIndex === -1) {
-    return res.status(404).json({ message: "Trip not found in cart" });
-  }
-
-  // Remove the trip from the cart
-  user.cart.splice(tripIndex, 1);
+  user.cart = user.cart.filter((id) => id.toString() !== tripId);
   await user.save();
 
   res.status(200).json({ message: "Trip removed from cart", cart: user.cart });
