@@ -1,4 +1,5 @@
 var express = require("express");
+const cors = require("cors");
 var path = require("path");
 var cookieParser = require("cookie-parser");
 var logger = require("morgan");
@@ -7,15 +8,8 @@ var indexRouter = require("./routes/index");
 var usersRouter = require("./routes/users");
 const session = require("express-session");
 var app = express();
-const cors = require("cors");
 
-app.use(
-  cors({
-    origin: "https://frontend-ticket-hack.vercel.app",
-    methods: "GET,POST,PUT,DELETE",
-    credentials: true,
-  })
-);
+app.use(cors());
 
 app.use(logger("dev"));
 app.use(express.json());
