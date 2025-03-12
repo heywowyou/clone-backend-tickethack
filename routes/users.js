@@ -25,6 +25,16 @@ router.get("/", async function (req, res) {
   res.status(200).json({ users });
 });
 
+// get user by sessionid
+router.get("/:sessionId", async (req, res) => {
+  const user = await User.findOne({ sessionId: req.params.sessionId });
+  if (user) {
+    res.json({ user });
+  } else {
+    res.status(404).json({ message: "No user found" });
+  }
+});
+
 // Add a trip to the user's cart
 router.post("/:sessionId/cart", async (req, res) => {
   const { tripId } = req.body;
