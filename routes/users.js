@@ -98,11 +98,11 @@ router.post("/login", async (req, res) => {
     const user = await User.findOne({ username: username, password: password });
 
     if (!user) {
-      return res.status(401).send("Utilisateur non trouvé");
+      return res.status(401).send({ message: "Utilisateur non trouvé" });
     }
 
     if (user.password !== password) {
-      return res.status(401).send("Mot de passe incorrect");
+      return res.status(401).send({ message: "Mot de passe incorrect" });
     }
 
     // Enregistrer l'ID de session dans la base de données
@@ -114,9 +114,9 @@ router.post("/login", async (req, res) => {
     // Créer une session pour l'utilisateur
     req.session.user = user; // Enregistrer l'utilisateur dans la session
 
-    res.send("Connexion réussie");
+    res.send({ message: "Connexion réussie" });
   } catch (err) {
-    res.status(500).send("Erreur serveur");
+    res.status(500).send({ message: "erreur serveur" });
   }
 });
 /* Generate fake user
