@@ -9,7 +9,13 @@ const session = require("express-session");
 var app = express();
 const cors = require("cors");
 
-app.use(cors());
+app.use(
+  cors({
+    origin: "https://frontend-ticket-hack.vercel.app",
+    methods: "GET,POST,PUT,DELETE",
+    credentials: true,
+  })
+);
 
 app.use(logger("dev"));
 app.use(express.json());
