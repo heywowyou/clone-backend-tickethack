@@ -61,6 +61,28 @@ router.post("/:sessionId/checkout", async (req, res) => {
     .json({ message: "Checkout successful", bookedTrips: user.bookedTrips });
 });
 
+// Remove a trip from the user's cart
+router.delete("/:sessionId/cart/:tripId", async (req, res) => {
+  const { sessionId, tripId } = req.params;
+
+  const user = await User.findOne({ sessionId });
+  if (!user) {
+    return res.status(404).json({ message: "User not found" });
+  }
+
+  // Check if the trip is in the cart
+  const tripIndex = user.cart.indexOf(tripId);
+  if (tripIndex === -1) {
+    return res.status(404).json({ message: "Trip not found in cart" });
+  }
+
+  // Remove the trip from the cart
+  user.cart.splice(tripIndex, 1);
+  await user.save();
+
+  res.status(200).json({ message: "Trip removed from cart", cart: user.cart });
+});
+
 router.post("/CreateAccount", async (req, res) => {
   const { username, password } = req.body;
 
@@ -119,25 +141,5 @@ router.post("/login", async (req, res) => {
     res.status(500).send({ message: "erreur serveur" });
   }
 });
-/* Generate fake user
-router.post("/create", async (req, res) => {
-  const username = "Alice";
-  const password = "Elk";
-  const allTrips = await Trip.find();
-
-  const shuffledTrips = allTrips.sort(() => 0.5 - Math.random());
-  const cart = shuffledTrips.slice(0, 2).map((trip) => trip._id);
-  const bookedTrips = shuffledTrips.slice(2, 4).map((trip) => trip._id);
-
-  const user = new User({
-    username,
-    password,
-    cart,
-    bookedTrips,
-  });
-
-  await user.save();
-  res.json({ message: "User created successfully", user });
-}); */
 
 module.exports = router;
