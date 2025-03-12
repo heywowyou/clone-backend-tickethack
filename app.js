@@ -6,9 +6,9 @@ require("./models/connection");
 var indexRouter = require("./routes/index");
 var usersRouter = require("./routes/users");
 const session = require("express-session");
-
 var app = express();
 const cors = require("cors");
+
 app.use(cors());
 
 app.use(logger("dev"));
