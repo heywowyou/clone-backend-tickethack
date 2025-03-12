@@ -35,7 +35,7 @@ router.get("/:sessionId", async (req, res) => {
   }
 });
 
-// get Cart with populate
+// Get cart with populate
 router.get("/:sessionId/cart", async (req, res) => {
   const user = await User.findOne({ sessionId: req.params.sessionId }).populate(
     "cart"
@@ -82,6 +82,18 @@ router.post("/:sessionId/checkout", async (req, res) => {
   res
     .status(200)
     .json({ message: "Checkout successful", bookedTrips: user.bookedTrips });
+});
+
+// Get all user's trips
+router.get("/:sessionId/bookings", async (req, res) => {
+  const { sessionId } = req.params;
+
+  const user = await User.findOne({ sessionId }).populate("bookedTrips");
+  if (!user) {
+    return res.status(404).json({ message: "User not found" });
+  }
+
+  res.status(200).json({ bookings: user.bookedTrips });
 });
 
 // Remove a trip from the user's cart
