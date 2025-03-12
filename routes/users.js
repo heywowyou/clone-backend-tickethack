@@ -35,6 +35,19 @@ router.get("/:sessionId", async (req, res) => {
   }
 });
 
+// get Cart with populate
+router.get("/:sessionId/cart", async (req, res) => {
+  const user = await User.findOne({ sessionId: req.params.sessionId }).populate(
+    "cart"
+  ); // 🔥 Récupère les détails des trips
+
+  if (user) {
+    res.json({ user });
+  } else {
+    res.status(404).json({ message: "No user found" });
+  }
+});
+
 // Add a trip to the user's cart
 router.post("/:sessionId/cart", async (req, res) => {
   const { tripId } = req.body;
